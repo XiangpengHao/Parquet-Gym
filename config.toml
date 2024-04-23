@@ -1,3 +1,6 @@
+[general]
+repeat = 3
+
 [[readers]]
 name = "arrow-rs"
 bin = "target/release/parquet_to_arrow"

@@ -18,8 +18,9 @@ The benchmark results are saved to `./results` folder, with one parquet file pai
 ### Supported Parquet readers
 - [pyarrow](https://arrow.apache.org/docs/python/parquet.html)
 - [arrow-rs](https://docs.rs/parquet/latest/parquet/)
+- [arrow-cpp](https://github.com/apache/arrow/tree/main/cpp/src/parquet)
 
-todo: 
+todo: parquet-go? DuckDB?
 
 ### Supported workloads
 - Sample data.

@@ -29,20 +29,22 @@ def build_reader(cwd, reader):
             break
 
 
-def benchmark_one(reader, workload) -> dict | None:
+def benchmark_one(repeat, reader, workload) -> dict | None:
     workspace_dir = os.path.dirname(os.path.realpath(__file__))
     working_dir = os.path.join(workspace_dir, reader["working_dir"])
 
     executable_path = os.path.join(working_dir, reader["bin"])
     workload_path = os.path.join(workspace_dir, workload["path"])
 
-    elapsed = run_command(f"{executable_path} {workload_path}", working_dir)
-    if not elapsed:
-        return None
-
-    print(
-        f"Reader: {reader['name']}, File: {workload['path']}, Elapsed time: {elapsed}s"
-    )
+    elapsed = []
+    for r in range(repeat):
+        t = run_command(f"{executable_path} {workload_path}", working_dir)
+        if not t:
+            return None
+        print(
+            f"Iteration: {r}, Reader: {reader['name']}, File: {workload['path']}, Elapsed time: {t}s"
+        )
+        elapsed.append(t)
 
     return {
         "reader": reader,
@@ -53,15 +55,17 @@ def benchmark_one(reader, workload) -> dict | None:
     }
 
 
-def benchmark(readers, workloads):
+def benchmark(global_config, readers, workloads):
     workspace_dir = os.path.dirname(os.path.realpath(__file__))
     results = []
+
+    repeat = global_config["repeat"]
 
     for r in readers:
         working_dir = os.path.join(workspace_dir, r["working_dir"])
         build_reader(working_dir, r)
         for f in workloads:
-            r = benchmark_one(r, f)
+            r = benchmark_one(repeat, r, f)
             results.append(r)
     return results
 
@@ -97,8 +101,13 @@ if __name__ == "__main__":
     with open("config.toml") as f:
         config = toml.load(f)
 
+    global_config = config["general"]
     workspace_dir = os.path.dirname(os.path.realpath(__file__))
 
     output_dir = os.path.join(workspace_dir, "results")
-    results = benchmark(readers=config["readers"], workloads=config["workloads"])
+    results = benchmark(
+        global_config=global_config,
+        readers=config["readers"],
+        workloads=config["workloads"],
+    )
     save_results(results, output_dir)

@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
     build-essential \
-    python3 curl \
+    python3 curl cmake \
     ca-certificates lsb-release wget \
     gcc
 

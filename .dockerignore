@@ -1,4 +1,4 @@
 .venv
-target
+readers/arrow-rs/target
 results
-build
+readers/arrow-cpp/build
