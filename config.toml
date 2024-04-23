@@ -1,0 +1,15 @@
+[[readers]]
+name = "arrow-rs"
+bin = "target/release/parquet_to_arrow"
+working_dir = "readers/arrow-rs"
+build = ["cargo build --release"]
+
+[[readers]]
+name = "pyarrow"
+bin = ".venv/bin/python parquet_to_arrow.py"
+working_dir = "readers/pyarrow"
+build = ["uv venv .venv", "uv pip install -p .venv/bin/python -r requirements.txt"]
+
+[[workloads]]
+name = "sample1"
+path = "workloads/sample1.parquet"
