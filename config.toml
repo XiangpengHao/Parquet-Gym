@@ -8,7 +8,19 @@ build = ["cargo build --release"]
 name = "pyarrow"
 bin = ".venv/bin/python parquet_to_arrow.py"
 working_dir = "readers/pyarrow"
-build = ["uv venv .venv", "uv pip install -p .venv/bin/python -r requirements.txt"]
+build = [
+	"uv venv .venv",
+	"uv pip install -p .venv/bin/python -r requirements.txt",
+]
+
+[[readers]]
+name = "arrow-cpp"
+bin = "build/parquet_to_arrow"
+working_dir = "readers/arrow-cpp"
+build = [
+	"cmake -S . -B build -DCMAKE_BUILD_TYPE=Release",
+	"cmake --build build",
+]
 
 [[workloads]]
 name = "sample1"
