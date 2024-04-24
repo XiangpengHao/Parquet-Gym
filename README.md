@@ -21,6 +21,7 @@ The benchmark results are saved to `./results` folder, with one parquet file pai
 - [arrow-cpp](https://github.com/apache/arrow/tree/main/cpp/src/parquet)
 
 todo: parquet-go? DuckDB?
+todo: how to add a new reader?
 
 ### Supported workloads
 - Sample data.
