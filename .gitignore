@@ -1,4 +1,5 @@
 .ruff_cache
 .venv
 results
-
+__pycache__
+workloads/tpch

@@ -6,6 +6,7 @@ import time
 import pyarrow as pa
 import pyarrow.parquet as pq
 import datetime
+from workloads.tpch_gen import tpch_gen
 
 
 def run_command(command, cwd) -> float | None:
@@ -65,8 +66,8 @@ def benchmark(global_config, readers, workloads):
         working_dir = os.path.join(workspace_dir, r["working_dir"])
         build_reader(working_dir, r)
         for f in workloads:
-            r = benchmark_one(repeat, r, f)
-            results.append(r)
+            rv = benchmark_one(repeat, r, f)
+            results.append(rv)
     return results
 
 
@@ -97,7 +98,17 @@ def save_results(results, dst_dir):
         print(f"Failed to save the parquet file: {e}")
 
 
+def gen_tpch_if_not_exist():
+    workspace_dir = os.path.dirname(os.path.realpath(__file__))
+    data_dir = os.path.join(workspace_dir, "workloads", "tpch")
+    if not os.path.exists(data_dir):
+        os.makedirs(data_dir)
+        tpch_gen(data_dir, sf=1)
+
+
 if __name__ == "__main__":
+    gen_tpch_if_not_exist()
+
     with open("config.toml") as f:
         config = toml.load(f)
 

@@ -2,3 +2,4 @@
 readers/arrow-rs/target
 results
 readers/arrow-cpp/build
+workloads/tpch

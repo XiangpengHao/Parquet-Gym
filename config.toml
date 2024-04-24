@@ -28,3 +28,11 @@ build = [
 [[workloads]]
 name = "sample1"
 path = "workloads/sample1.parquet"
+
+[[workloads]]
+name = "lineitem"
+path = "workloads/tpch/lineitem.parquet"
+
+[[workloads]]
+name = "orders"
+path = "workloads/tpch/orders.parquet"

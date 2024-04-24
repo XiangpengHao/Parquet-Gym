@@ -14,6 +14,10 @@ docker run -v ./results:/app/results parquet-gym
 
 The benchmark results are saved to `./results` folder, with one parquet file paired with a json file (human readable). 
 
+## Leaderboard
+todo
+todo: current benchmark does not look right, pyarrow is faster than arrow-cpp, which is not possible.
+
 ## Gym equipments
 ### Supported Parquet readers
 - [pyarrow](https://arrow.apache.org/docs/python/parquet.html)
@@ -25,6 +29,7 @@ todo: how to add a new reader?
 
 ### Supported workloads
 - Sample data.
+- TPC-H (default scale factor: 1)
 
 todo: TPC-H, NYX-taxi, etc.
 
