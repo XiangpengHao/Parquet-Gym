@@ -1,5 +1,6 @@
 [general]
 repeat = 3
+clear_page_cache = true
 
 [[readers]]
 name = "arrow-rs"
@@ -36,3 +37,7 @@ path = "workloads/tpch/lineitem.parquet"
 [[workloads]]
 name = "orders"
 path = "workloads/tpch/orders.parquet"
+
+[[workloads]]
+name = "partsupp"
+path = "workloads/tpch/partsupp.parquet"

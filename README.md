@@ -15,8 +15,8 @@ docker run -v ./results:/app/results parquet-gym
 The benchmark results are saved to `./results` folder, with one parquet file paired with a json file (human readable). 
 
 ## Leaderboard
-todo
 todo: current benchmark does not look right, pyarrow is faster than arrow-cpp, which is not possible.
+![](results/leaderboard.png)
 
 ## Gym equipments
 ### Supported Parquet readers

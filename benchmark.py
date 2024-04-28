@@ -6,19 +6,97 @@ import time
 import pyarrow as pa
 import pyarrow.parquet as pq
 import datetime
+import psutil
 from workloads.tpch_gen import tpch_gen
 
 
-def run_command(command, cwd) -> float | None:
+class IoCounters:
+    def __init__(self, raw_counter) -> None:
+        self.read_count = raw_counter.read_count
+        self.write_count = raw_counter.write_count
+        self.read_bytes = raw_counter.read_bytes
+        self.write_bytes = raw_counter.write_bytes
+        self.read_chars = raw_counter.read_chars
+        self.write_chars = raw_counter.write_chars
+
+    def __sub__(self, other):
+        if not isinstance(other, IoCounters):
+            raise TypeError("Unsupported operand type for -: " + type(other).__name__)
+
+        result = IoCounters(self)
+        result.read_count -= other.read_count
+        result.write_count -= other.write_count
+        result.read_bytes -= other.read_bytes
+        result.write_bytes -= other.write_bytes
+        result.read_chars -= other.read_chars
+        result.write_chars -= other.write_chars
+
+        return result
+
+    def __str__(self):
+        return f"IoCounters(read_count={self.read_count}, write_count={self.write_count}, read_bytes={self.read_bytes}, write_bytes={self.write_bytes}, read_chars={self.read_chars}, write_chars={self.write_chars})"
+
+    def to_dict(self):
+        return {
+            "read_count": self.read_count,
+            "write_count": self.write_count,
+            "read_bytes": self.read_bytes,
+            "write_bytes": self.write_bytes,
+            "read_chars": self.read_chars,
+            "write_chars": self.write_chars,
+        }
+
+
+class Metrics:
+    def __init__(self, io: IoCounters, elapsed: float) -> None:
+        self.io = io
+        self.elapsed = elapsed
+
+    def to_dict(self):
+        return {
+            "io": self.io.to_dict(),
+            "elapsed": self.elapsed,
+        }
+
+
+def run_command_with_metrics(command, cwd) -> Metrics | None:
+    try:
+        start_time = time.time()
+
+        proc = subprocess.Popen(command, cwd=cwd, shell=True)
+        ps_proc = psutil.Process()
+        old_counter = IoCounters(ps_proc.io_counters())
+
+        proc.wait()
+
+        elapsed_time = time.time() - start_time
+
+        io_counters = IoCounters(ps_proc.io_counters())
+
+        io_counters = io_counters - old_counter
+        metric = Metrics(io_counters, elapsed_time)
+        return metric
+    except psutil.NoSuchProcess as e:
+        print(f"Process finished before I/O stats could be retrieved: {e}")
+        return None
+    except Exception as e:
+        print(f"An unexpected error occurred: {str(e)}")
+        return None
+
+
+def run_command(command, cwd=None) -> float | None:
     try:
         start_time = time.time()
         subprocess.run(command, cwd=cwd, shell=True, check=True)
         elapsed_time = time.time() - start_time
         return elapsed_time
     except subprocess.CalledProcessError as e:
-        print(f"An error occurred while executing: {command}")
-        print(f"Error: {e}")
+        print(f"An error occurred while executing: {command}, err: {e}")
         return None
+
+
+def clear_page_cache():
+    run_command("echo 1 > /proc/sys/vm/drop_caches")
 
 
 def build_reader(cwd, reader):
@@ -37,22 +115,20 @@ def benchmark_one(repeat, reader, workload) -> dict | None:
     executable_path = os.path.join(working_dir, reader["bin"])
     workload_path = os.path.join(workspace_dir, workload["path"])
 
-    elapsed = []
+    metrics = []
     for r in range(repeat):
-        t = run_command(f"{executable_path} {workload_path}", working_dir)
+        t = run_command_with_metrics(f"{executable_path} {workload_path}", working_dir)
         if not t:
             return None
         print(
-            f"Iteration: {r}, Reader: {reader['name']}, File: {workload['path']}, Elapsed time: {t}s"
+            f"Iteration: {r}, elapsed time: {t.elapsed}s, reader: {reader['name']}, file: {workload['path']}"
         )
-        elapsed.append(t)
+        metrics.append(t.to_dict())
 
     return {
         "reader": reader,
         "workload": workload,
-        "result": {
-            "elapsed": elapsed,
-        },
+        "result": metrics,
     }
 
 
@@ -66,6 +142,8 @@ def benchmark(global_config, readers, workloads):
         working_dir = os.path.join(workspace_dir, r["working_dir"])
         build_reader(working_dir, r)
         for f in workloads:
+            if global_config["clear_page_cache"]:
+                clear_page_cache()
             rv = benchmark_one(repeat, r, f)
             results.append(rv)
     return results
