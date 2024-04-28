@@ -14,7 +14,7 @@ def prefixed_unnest(df: pl.DataFrame, column: str):
     
 
 # %%
-df = pl.read_parquet("results/2024-04-28/16-18-results.parquet")
+df = pl.read_parquet("results/2024-04-28/21-17-results.parquet")
 df = prefixed_unnest(df, "reader")
 df = prefixed_unnest(df, "workload")
 df = df.explode("result")

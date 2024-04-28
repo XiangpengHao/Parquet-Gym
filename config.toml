@@ -1,6 +1,6 @@
 [general]
 repeat = 3
-clear_page_cache = true
+clear_page_cache = false 
 
 [[readers]]
 name = "arrow-rs"
@@ -26,9 +26,9 @@ build = [
 	"cmake --build build",
 ]
 
-[[workloads]]
-name = "sample1"
-path = "workloads/sample1.parquet"
+# [[workloads]]
+# name = "sample1"
+# path = "workloads/sample1.parquet"
 
 [[workloads]]
 name = "lineitem"

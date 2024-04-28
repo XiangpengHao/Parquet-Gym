@@ -35,6 +35,8 @@ todo: TPC-H, NYX-taxi, etc.
 
 ### Supported metrics
 - Elapsed time (wall time)
+- Disk traffic
+- Disk IO count
 
-todo: CPU time, memory usage, disk IO bandwidth, disk IO count.
+todo: CPU time, memory usage.
 
