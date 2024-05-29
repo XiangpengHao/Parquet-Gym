@@ -701,6 +701,8 @@ dependencies = [
  "criterion",
  "parquet",
  "rand",
+ "serde",
+ "serde_json",
  "thrift",
 ]
 
