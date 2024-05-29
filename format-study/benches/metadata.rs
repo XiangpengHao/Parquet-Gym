@@ -26,8 +26,11 @@ struct BenchmarkResult {
     measurements: Measurements,
 }
 
-fn benchmark() -> Vec<BenchmarkResult> {
-    let columns = [10, 100, 1_000, 10_000, 100_000];
+fn benchmark(column_size: Option<usize>) -> Vec<BenchmarkResult> {
+    let columns = match column_size {
+        Some(size) => vec![size],
+        None => vec![10, 100, 1_000, 10_000, 100_000],
+    };
     let mut results = vec![];
 
     for num_column in columns.iter() {
@@ -71,7 +74,15 @@ fn save_result_to_json(dst: impl AsRef<Path>, results: &Vec<BenchmarkResult>) {
 }
 
 fn main() {
-    let results = benchmark();
+    // An almost too simple arg handling.
+    let args: Vec<String> = std::env::args().collect();
+    let column_size = if args.len() > 1 {
+        Some(args[1].parse::<usize>().expect("Invalid column size"))
+    } else {
+        None
+    };
+
+    let results = benchmark(column_size);
     let dst_file = "target/benchmark/metadata_bench.json";
     save_result_to_json(dst_file, &results);
     println!("Benchmark result saved to {}", dst_file);

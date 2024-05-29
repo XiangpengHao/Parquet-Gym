@@ -33,3 +33,11 @@ It clearly shows that the time to decode the metadata is positively correlated w
 ![metadata](python/metadata.png)
 
 #### Where did time go?
+(working-in-progress)
+
+Generate a flamegraph:
+```bash
+cargo flamegraph --root --bench metadata -- 100000
+```
+
+![flamegraph](flamegraph.svg)
