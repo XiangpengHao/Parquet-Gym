@@ -40,4 +40,15 @@ Generate a flamegraph:
 cargo flamegraph --root --bench metadata -- 100000
 ```
 
-![flamegraph](flamegraph.svg)
+As [@tustvold](https://github.com/tustvold) pointed out in [this issue](https://github.com/apache/arrow-rs/issues/5775), reading Parquet metadata incurs a lot of allocations.
+
+We can demonstrate this by using a better allocator (e.g., [mimalloc](https://github.com/purpleprotocol/mimalloc_rust)) to see the performance gap. 
+
+To benchmark with `mimalloc`
+```bash
+cargo bench --bench metadata --features "mimalloc"
+```
+
+We can generate the following figure.
+![allocation](python/allocation.png)
+
