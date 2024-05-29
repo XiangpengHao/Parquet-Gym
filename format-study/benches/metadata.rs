@@ -1,43 +1,78 @@
-use criterion::*;
-use format_study::{encode_parquet_meta, encoded_ipc_schema};
+use std::{path::Path, time::Duration};
+
+use format_study::encode_parquet_meta;
 use parquet::{
     format::FileMetaData,
     thrift::{TCompactSliceInputProtocol, TSerializable},
 };
+use serde::Serialize;
 
-fn criterion_benchmark(c: &mut Criterion) {
-    let columns = [10, 100, 1_000, 10_000, 100_000];
-    let mut parquet_group = c.benchmark_group("parquet_column_size");
-    for num_column in columns.iter() {
-        let buf = black_box(encode_parquet_meta(*num_column));
-        println!("Parquet metadata len {}", buf.len());
-        parquet_group.bench_with_input(
-            BenchmarkId::from_parameter(num_column),
-            num_column,
-            |b, _num_column| {
-                b.iter(|| {
-                    let mut input = TCompactSliceInputProtocol::new(&buf);
-                    FileMetaData::read_from_in_protocol(&mut input).unwrap();
-                });
-            },
-        );
-    }
-    parquet_group.finish();
+const REPEAT: usize = 5;
 
-    let mut arrow_group = c.benchmark_group("arrow_ipc_column_size");
-    for num_column in columns.iter() {
-        let buf = black_box(encoded_ipc_schema(*num_column));
-        println!("Arrow IPC schema len {}", buf.len());
-        arrow_group.bench_with_input(
-            BenchmarkId::from_parameter(num_column),
-            num_column,
-            |b, _num_column| {
-                b.iter(|| arrow::ipc::root_as_message(&buf).unwrap());
-            },
-        );
-    }
-    arrow_group.finish();
+#[derive(Clone, Debug, Serialize)]
+struct Config {
+    num_columns: usize,
 }
 
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
+#[derive(Debug, Serialize)]
+struct Measurements {
+    elapse: Duration,
+    meta_data_size: usize,
+}
+
+#[derive(Debug, Serialize)]
+struct BenchmarkResult {
+    config: Config,
+    measurements: Measurements,
+}
+
+fn benchmark() -> Vec<BenchmarkResult> {
+    let columns = [10, 100, 1_000, 10_000, 100_000];
+    let mut results = vec![];
+
+    for num_column in columns.iter() {
+        let c = Config {
+            num_columns: *num_column,
+        };
+        let result = benchmark_one(&c);
+        results.extend(result);
+    }
+    results
+}
+
+fn benchmark_one(c: &Config) -> Vec<BenchmarkResult> {
+    let mut results = vec![];
+    let buf = encode_parquet_meta(c.num_columns);
+    let meta_size = buf.len();
+
+    for _ in 0..REPEAT {
+        let start = std::time::Instant::now();
+        let mut input = TCompactSliceInputProtocol::new(&buf);
+        FileMetaData::read_from_in_protocol(&mut input).unwrap();
+        let elapse = start.elapsed();
+        results.push(BenchmarkResult {
+            config: c.clone(),
+            measurements: Measurements {
+                elapse,
+                meta_data_size: meta_size,
+            },
+        });
+    }
+    results
+}
+
+fn save_result_to_json(dst: impl AsRef<Path>, results: &Vec<BenchmarkResult>) {
+    let path = dst.as_ref();
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).expect("Unable to create directories");
+    }
+    let file = std::fs::File::create(dst).unwrap();
+    serde_json::to_writer_pretty(file, results).unwrap();
+}
+
+fn main() {
+    let results = benchmark();
+    let dst_file = "target/benchmark/metadata_bench.json";
+    save_result_to_json(dst_file, &results);
+    println!("Benchmark result saved to {}", dst_file);
+}

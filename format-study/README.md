@@ -19,13 +19,17 @@ It is common to store a large number of features (thousands of key-value pairs) 
 
 Run the following command to measure the time it takes to decode the parquet metadata with column number ranging from 10 to 100k. 
 ```bash
-cargo bench "parquet"
+cargo bench --bench metadata
 ```
 
-To compare with the decoding arrow IPC format:
+To plot the results, run the following command:
 ```bash
-cargo bench "arrow_ipc"
+python python/plot_result.py
 ```
+(todo: how to setup python environment)
 
+We will get the following figure.
+It clearly shows that the time to decode the metadata is positively correlated with the number of columns in the parquet file.
+![metadata](python/metadata.png)
 
-
+#### Where did time go?

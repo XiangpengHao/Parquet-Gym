@@ -19,7 +19,3 @@ criterion = "0.5.1"
 [[bench]]
 name = "metadata"
 harness = false
-
-[[bench]]
-name = "metadatav2"
-harness = false
