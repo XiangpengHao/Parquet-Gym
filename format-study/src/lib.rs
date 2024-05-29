@@ -9,6 +9,10 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use thrift::protocol::TCompactOutputProtocol;
 
+mod simd_thrift;
+
+pub use simd_thrift::TCompactSimdInputProtocol;
+
 const NUM_ROW_GROUPS: usize = 10;
 
 pub fn encode_parquet_meta(num_columns: usize) -> (Vec<u8>, FileMetaData) {

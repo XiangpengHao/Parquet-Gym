@@ -1,7 +1,7 @@
 use std::{path::Path, time::Duration};
 
 use chrono::Local;
-use format_study::encode_parquet_meta;
+use format_study::{encode_parquet_meta, TCompactSimdInputProtocol};
 use parquet::{
     format::FileMetaData,
     thrift::{TCompactSliceInputProtocol, TSerializable},
@@ -21,6 +21,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 struct Config {
     num_columns: usize,
     mimalloc: bool,
+    simd: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -45,11 +46,8 @@ fn benchmark(column_size: Option<usize>) -> Vec<BenchmarkResult> {
     for num_column in columns.iter() {
         let c = Config {
             num_columns: *num_column,
-            mimalloc: if cfg!(feature = "mimalloc") {
-                true
-            } else {
-                false
-            },
+            mimalloc: cfg!(feature = "mimalloc"),
+            simd: cfg!(feature = "simd"),
         };
         let result = benchmark_one(&c);
         results.extend(result);
@@ -64,10 +62,15 @@ fn benchmark_one(c: &Config) -> Vec<BenchmarkResult> {
 
     for _ in 0..REPEAT {
         let start = std::time::Instant::now();
-        let mut input = TCompactSliceInputProtocol::new(&buf);
-        let meta = FileMetaData::read_from_in_protocol(&mut input).unwrap();
+        let decoded_meta = if cfg!(feature = "simd") {
+            let mut input = TCompactSimdInputProtocol::new(&buf);
+            FileMetaData::read_from_in_protocol(&mut input).unwrap()
+        } else {
+            let mut input = TCompactSliceInputProtocol::new(&buf);
+            FileMetaData::read_from_in_protocol(&mut input).unwrap()
+        };
         let elapse = start.elapsed();
-        assert_eq!(metadata, meta);
+        assert_eq!(metadata, decoded_meta);
         results.push(BenchmarkResult {
             config: c.clone(),
             measurements: Measurements {
