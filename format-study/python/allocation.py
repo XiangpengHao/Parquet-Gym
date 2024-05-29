@@ -15,7 +15,7 @@ def plot(with_mimalloc: str, without_mimalloc: str, output: str):
 	fig, ax1 = plt.subplots(1, 1, figsize=(6, 4))
 	sns.barplot(data=data, x='mimalloc', y='time_per_column', ax=ax1, color='tab:blue')
 	ax1.set_xlabel('')
-	ax1.set_ylabel('Time per column (ns)')
+	ax1.set_ylabel('Decode time per column (ns)')
 	ax1.set_xticklabels(['Default allocator', 'Mimalloc'])
 	fig.show()
 	fig.savefig(output, dpi = 300)

@@ -89,17 +89,17 @@ fn save_result_to_json(dst: impl AsRef<Path>, results: &Vec<BenchmarkResult>) {
 
 fn main() {
     // An almost too simple arg handling.
-    // let args: Vec<String> = std::env::args().collect();
-    // let column_size = if args.len() > 1 {
-    //     Some(args[1].parse::<usize>().expect("Invalid column size"))
-    // } else {
-    //     None
-    // };
+    let args: Vec<String> = std::env::args().collect();
+    let column_size = if args.len() > 1 {
+        Some(args[1].parse::<usize>().expect("Invalid column size"))
+    } else {
+        None
+    };
 
     let current_time = Local::now();
     let formatted_time = current_time.format("%m_%d_%H_%M").to_string();
     let dst_file = format!("target/benchmark/metadata_bench_{}.json", formatted_time);
-    let results = benchmark(None);
+    let results = benchmark(column_size);
     save_result_to_json(&dst_file, &results);
     println!("Benchmark result saved to {}", dst_file);
 }
