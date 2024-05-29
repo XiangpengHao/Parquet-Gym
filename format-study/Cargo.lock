@@ -112,6 +112,20 @@ dependencies = [
 [[package]]
 name = "arrow-array"
 version = "51.0.0"
+dependencies = [
+ "ahash",
+ "arrow-buffer 51.0.0",
+ "arrow-data 51.0.0",
+ "arrow-schema 51.0.0",
+ "chrono",
+ "half",
+ "hashbrown",
+ "num",
+]
+
+[[package]]
+name = "arrow-array"
+version = "51.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8010572cf8c745e242d1b632bd97bd6d4f40fefed5ed1290a8f433abaa686fea"
 dependencies = [
@@ -126,17 +140,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-array"
+name = "arrow-buffer"
 version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "ahash",
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "chrono",
+ "bytes",
  "half",
- "hashbrown",
  "num",
 ]
 
@@ -152,13 +160,21 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-buffer"
+name = "arrow-cast"
 version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "bytes",
+ "arrow-array 51.0.0",
+ "arrow-buffer 51.0.0",
+ "arrow-data 51.0.0",
+ "arrow-schema 51.0.0",
+ "arrow-select 51.0.0",
+ "atoi",
+ "base64",
+ "chrono",
  "half",
+ "lexical-core",
  "num",
+ "ryu",
 ]
 
 [[package]]
@@ -172,25 +188,6 @@ dependencies = [
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-select 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "atoi",
- "base64",
- "chrono",
- "half",
- "lexical-core",
- "num",
- "ryu",
-]
-
-[[package]]
-name = "arrow-cast"
-version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
-dependencies = [
- "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-select 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
  "atoi",
  "base64",
  "chrono",
@@ -222,6 +219,16 @@ dependencies = [
 [[package]]
 name = "arrow-data"
 version = "51.0.0"
+dependencies = [
+ "arrow-buffer 51.0.0",
+ "arrow-schema 51.0.0",
+ "half",
+ "num",
+]
+
+[[package]]
+name = "arrow-data"
+version = "51.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2742ac1f6650696ab08c88f6dd3f0eb68ce10f8c253958a18c943a68cd04aec5"
 dependencies = [
@@ -232,14 +239,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-data"
+name = "arrow-ipc"
 version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "half",
- "num",
+ "arrow-array 51.0.0",
+ "arrow-buffer 51.0.0",
+ "arrow-cast 51.0.0",
+ "arrow-data 51.0.0",
+ "arrow-schema 51.0.0",
+ "flatbuffers 24.3.25",
 ]
 
 [[package]]
@@ -254,19 +262,6 @@ dependencies = [
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "flatbuffers 23.5.26",
-]
-
-[[package]]
-name = "arrow-ipc"
-version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
-dependencies = [
- "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-cast 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "flatbuffers 24.3.25",
 ]
 
 [[package]]
@@ -322,13 +317,24 @@ dependencies = [
 [[package]]
 name = "arrow-schema"
 version = "51.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02d9483aaabe910c4781153ae1b6ae0393f72d9ef757d38d09d450070cf2e528"
 
 [[package]]
 name = "arrow-schema"
 version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "02d9483aaabe910c4781153ae1b6ae0393f72d9ef757d38d09d450070cf2e528"
+
+[[package]]
+name = "arrow-select"
+version = "51.0.0"
+dependencies = [
+ "ahash",
+ "arrow-array 51.0.0",
+ "arrow-buffer 51.0.0",
+ "arrow-data 51.0.0",
+ "arrow-schema 51.0.0",
+ "num",
+]
 
 [[package]]
 name = "arrow-select"
@@ -341,19 +347,6 @@ dependencies = [
  "arrow-buffer 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "num",
-]
-
-[[package]]
-name = "arrow-select"
-version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
-dependencies = [
- "ahash",
- "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
  "num",
 ]
 
@@ -671,7 +664,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4dac53e22462d78c16d64a1cd22371b54cc3fe94aa15e7886a2fa6e5d1ab8640"
 dependencies = [
  "bitflags",
- "rustc_version",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
@@ -681,7 +674,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8add37afff2d4ffa83bc748a70b4b1370984f6980768554182424ef71447c35f"
 dependencies = [
  "bitflags",
- "rustc_version",
+ "rustc_version 0.4.0",
 ]
 
 [[package]]
@@ -708,6 +701,7 @@ dependencies = [
  "serde",
  "serde_json",
  "thrift",
+ "varint-simd",
 ]
 
 [[package]]
@@ -1066,16 +1060,15 @@ dependencies = [
 [[package]]
 name = "parquet"
 version = "51.0.0"
-source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
  "ahash",
- "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-cast 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-ipc 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
- "arrow-select 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-array 51.0.0",
+ "arrow-buffer 51.0.0",
+ "arrow-cast 51.0.0",
+ "arrow-data 51.0.0",
+ "arrow-ipc 51.0.0",
+ "arrow-schema 51.0.0",
+ "arrow-select 51.0.0",
  "base64",
  "brotli",
  "bytes",
@@ -1100,6 +1093,17 @@ name = "paste"
 version = "1.0.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57c0d7b74b563b49d38dae00a0c37d4d6de9b432382b2892f0574ddcae73fd0a"
+
+[[package]]
+name = "pest"
+version = "2.7.10"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "560131c633294438da9f7c4b08189194b20946c8274c6b9e38881a7874dc8ee8"
+dependencies = [
+ "memchr",
+ "thiserror",
+ "ucd-trie",
+]
 
 [[package]]
 name = "pkg-config"
@@ -1240,11 +1244,20 @@ checksum = "adad44e29e4c806119491a7f06f03de4d1af22c3a680dd47f1e6e179439d1f56"
 
 [[package]]
 name = "rustc_version"
+version = "0.3.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0dfe2087c51c460008730de8b57e6a320782fbfb312e1f4d520e6c6fae155ee"
+dependencies = [
+ "semver 0.11.0",
+]
+
+[[package]]
+name = "rustc_version"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
 dependencies = [
- "semver",
+ "semver 1.0.23",
 ]
 
 [[package]]
@@ -1264,9 +1277,27 @@ dependencies = [
 
 [[package]]
 name = "semver"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f301af10236f6df4160f7c3f04eec6dbc70ace82d23326abad5edee88801c6b6"
+dependencies = [
+ "semver-parser",
+]
+
+[[package]]
+name = "semver"
 version = "1.0.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "61697e0a1c7e512e84a621326239844a24d8207b4669b41bc18b32ea5cbf988b"
+
+[[package]]
+name = "semver-parser"
+version = "0.10.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "00b0bef5b7f9e0df16536d3961cfb6e84331c065b4066afb39768d0e319411f7"
+dependencies = [
+ "pest",
+]
 
 [[package]]
 name = "seq-macro"
@@ -1329,6 +1360,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "thiserror"
+version = "1.0.61"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c546c80d6be4bc6a00c0f01730c08df82eaa7a7a61f11d656526506112cc1709"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "1.0.61"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "46c3384250002a6d5af4d114f2845d37b57521033f30d5c3f46c4d70e1197533"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "threadpool"
 version = "1.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1380,10 +1431,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "ucd-trie"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ed646292ffc8188ef8ea4d1e0e0150fb15a5c2e12ad9b8fc191ae7a8a7f3c4b9"
+
+[[package]]
 name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "varint-simd"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9d6b8d2277e06002f0de053fbf74b796b64ba133a00d7b4a700202013f1d5a94"
+dependencies = [
+ "rustc_version 0.3.3",
+]
 
 [[package]]
 name = "version_check"

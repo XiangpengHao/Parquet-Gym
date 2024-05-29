@@ -59,14 +59,15 @@ fn benchmark(column_size: Option<usize>) -> Vec<BenchmarkResult> {
 
 fn benchmark_one(c: &Config) -> Vec<BenchmarkResult> {
     let mut results = vec![];
-    let buf = encode_parquet_meta(c.num_columns);
+    let (buf, metadata) = encode_parquet_meta(c.num_columns);
     let meta_size = buf.len();
 
     for _ in 0..REPEAT {
         let start = std::time::Instant::now();
         let mut input = TCompactSliceInputProtocol::new(&buf);
-        std::hint::black_box(FileMetaData::read_from_in_protocol(&mut input).unwrap());
+        let meta = FileMetaData::read_from_in_protocol(&mut input).unwrap();
         let elapse = start.elapsed();
+        assert_eq!(metadata, meta);
         results.push(BenchmarkResult {
             config: c.clone(),
             measurements: Measurements {

@@ -11,7 +11,7 @@ use thrift::protocol::TCompactOutputProtocol;
 
 const NUM_ROW_GROUPS: usize = 10;
 
-pub fn encode_parquet_meta(num_columns: usize) -> Vec<u8> {
+pub fn encode_parquet_meta(num_columns: usize) -> (Vec<u8>, FileMetaData) {
     let mut rng = StdRng::seed_from_u64(42);
     let mut schema = Vec::with_capacity(num_columns + 1);
 
@@ -102,7 +102,7 @@ pub fn encode_parquet_meta(num_columns: usize) -> Vec<u8> {
         let mut out = TCompactOutputProtocol::new(&mut buf);
         file.write_to_out_protocol(&mut out).unwrap();
     }
-    buf
+    (buf, file)
 }
 
 pub fn encoded_ipc_schema(num_columns: usize) -> Vec<u8> {

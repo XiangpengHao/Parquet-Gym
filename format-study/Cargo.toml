@@ -6,16 +6,18 @@ edition = "2021"
 [dependencies]
 arrow = "51.0.0"
 bytes = "1.6.0"
-parquet = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
+parquet = { path = "../../arrow-rs/parquet" }
 rand = "0.8.5"
 serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "1.0.117"
 thrift = "0.17.0"
 mimalloc = { version = "*", optional = true }
 chrono = "0.4.38"
+varint-simd = "0.4.0"
 
 [features]
 mimalloc = ["dep:mimalloc"]
+simd = []
 
 [dev-dependencies]
 criterion = "0.5.1"
