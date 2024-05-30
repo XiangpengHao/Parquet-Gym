@@ -1,7 +1,7 @@
 use std::{path::Path, time::Duration};
 
 use chrono::Local;
-use format_study::{encode_parquet_meta, TCompactSimdInputProtocol};
+use format_study::encode_parquet_meta;
 use parquet::{
     format::FileMetaData,
     thrift::{TCompactSliceInputProtocol, TSerializable},
@@ -62,10 +62,13 @@ fn benchmark_one(c: &Config) -> Vec<BenchmarkResult> {
 
     for _ in 0..REPEAT {
         let start = std::time::Instant::now();
-        let decoded_meta = if cfg!(feature = "simd") {
-            let mut input = TCompactSimdInputProtocol::new(&buf);
+        #[cfg(feature = "simd")]
+        let decoded_meta = {
+            let mut input = format_study::TCompactSimdInputProtocol::new(&buf);
             FileMetaData::read_from_in_protocol(&mut input).unwrap()
-        } else {
+        };
+        #[cfg(not(feature = "simd"))]
+        let decoded_meta = {
             let mut input = TCompactSliceInputProtocol::new(&buf);
             FileMetaData::read_from_in_protocol(&mut input).unwrap()
         };
@@ -101,7 +104,7 @@ fn main() {
     };
 
     let current_time = Local::now();
-    let formatted_time = current_time.format("%m_%d_%H_%M").to_string();
+    let formatted_time = current_time.format("%m_%d_%H_%M_%S").to_string();
     let dst_file = format!("target/benchmark/metadata_bench_{}.json", formatted_time);
     let results = benchmark(column_size);
     save_result_to_json(&dst_file, &results);

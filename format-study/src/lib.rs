@@ -9,8 +9,10 @@ use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
 use thrift::protocol::TCompactOutputProtocol;
 
+#[cfg(feature = "simd")]
 mod simd_thrift;
 
+#[cfg(feature = "simd")]
 pub use simd_thrift::TCompactSimdInputProtocol;
 
 const NUM_ROW_GROUPS: usize = 10;
