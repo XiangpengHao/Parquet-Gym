@@ -5,7 +5,7 @@ use format_study::encode_parquet_meta;
 use parquet::{format::FileMetaData, thrift::TSerializable};
 use serde::Serialize;
 
-const REPEAT: usize = 5;
+const REPEAT: usize = 10;
 
 #[cfg(feature = "mimalloc")]
 use mimalloc::MiMalloc;

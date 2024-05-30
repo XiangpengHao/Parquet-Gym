@@ -28,3 +28,8 @@ debug = true
 [[bench]]
 name = "metadata"
 harness = false
+
+[[bench]]
+name = "wide_parquet"
+harness = false
+
