@@ -112,20 +112,6 @@ dependencies = [
 [[package]]
 name = "arrow-array"
 version = "51.0.0"
-dependencies = [
- "ahash",
- "arrow-buffer 51.0.0",
- "arrow-data 51.0.0",
- "arrow-schema 51.0.0",
- "chrono",
- "half",
- "hashbrown",
- "num",
-]
-
-[[package]]
-name = "arrow-array"
-version = "51.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8010572cf8c745e242d1b632bd97bd6d4f40fefed5ed1290a8f433abaa686fea"
 dependencies = [
@@ -140,11 +126,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-buffer"
+name = "arrow-array"
 version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "bytes",
+ "ahash",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "chrono",
  "half",
+ "hashbrown",
  "num",
 ]
 
@@ -160,21 +152,13 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-cast"
+name = "arrow-buffer"
 version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "arrow-array 51.0.0",
- "arrow-buffer 51.0.0",
- "arrow-data 51.0.0",
- "arrow-schema 51.0.0",
- "arrow-select 51.0.0",
- "atoi",
- "base64",
- "chrono",
+ "bytes",
  "half",
- "lexical-core",
  "num",
- "ryu",
 ]
 
 [[package]]
@@ -188,6 +172,25 @@ dependencies = [
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-select 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "atoi",
+ "base64",
+ "chrono",
+ "half",
+ "lexical-core",
+ "num",
+ "ryu",
+]
+
+[[package]]
+name = "arrow-cast"
+version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
+dependencies = [
+ "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-select 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
  "atoi",
  "base64",
  "chrono",
@@ -219,16 +222,6 @@ dependencies = [
 [[package]]
 name = "arrow-data"
 version = "51.0.0"
-dependencies = [
- "arrow-buffer 51.0.0",
- "arrow-schema 51.0.0",
- "half",
- "num",
-]
-
-[[package]]
-name = "arrow-data"
-version = "51.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2742ac1f6650696ab08c88f6dd3f0eb68ce10f8c253958a18c943a68cd04aec5"
 dependencies = [
@@ -239,15 +232,14 @@ dependencies = [
 ]
 
 [[package]]
-name = "arrow-ipc"
+name = "arrow-data"
 version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
- "arrow-array 51.0.0",
- "arrow-buffer 51.0.0",
- "arrow-cast 51.0.0",
- "arrow-data 51.0.0",
- "arrow-schema 51.0.0",
- "flatbuffers 24.3.25",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "half",
+ "num",
 ]
 
 [[package]]
@@ -262,6 +254,19 @@ dependencies = [
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "flatbuffers 23.5.26",
+]
+
+[[package]]
+name = "arrow-ipc"
+version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
+dependencies = [
+ "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-cast 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "flatbuffers 24.3.25",
 ]
 
 [[package]]
@@ -317,24 +322,13 @@ dependencies = [
 [[package]]
 name = "arrow-schema"
 version = "51.0.0"
-
-[[package]]
-name = "arrow-schema"
-version = "51.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "02d9483aaabe910c4781153ae1b6ae0393f72d9ef757d38d09d450070cf2e528"
 
 [[package]]
-name = "arrow-select"
+name = "arrow-schema"
 version = "51.0.0"
-dependencies = [
- "ahash",
- "arrow-array 51.0.0",
- "arrow-buffer 51.0.0",
- "arrow-data 51.0.0",
- "arrow-schema 51.0.0",
- "num",
-]
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 
 [[package]]
 name = "arrow-select"
@@ -347,6 +341,19 @@ dependencies = [
  "arrow-buffer 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-data 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "arrow-schema 51.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "num",
+]
+
+[[package]]
+name = "arrow-select"
+version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
+dependencies = [
+ "ahash",
+ "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
  "num",
 ]
 
@@ -1060,15 +1067,16 @@ dependencies = [
 [[package]]
 name = "parquet"
 version = "51.0.0"
+source = "git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench#43d9e08af465213bfa12f317933403cb5302ecc9"
 dependencies = [
  "ahash",
- "arrow-array 51.0.0",
- "arrow-buffer 51.0.0",
- "arrow-cast 51.0.0",
- "arrow-data 51.0.0",
- "arrow-ipc 51.0.0",
- "arrow-schema 51.0.0",
- "arrow-select 51.0.0",
+ "arrow-array 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-buffer 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-cast 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-data 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-ipc 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-schema 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
+ "arrow-select 51.0.0 (git+https://github.com/XiangpengHao/arrow-rs.git?branch=metadata-bench)",
  "base64",
  "brotli",
  "bytes",

@@ -2,10 +2,7 @@ use std::{path::Path, time::Duration};
 
 use chrono::Local;
 use format_study::encode_parquet_meta;
-use parquet::{
-    format::FileMetaData,
-    thrift::{TCompactSliceInputProtocol, TSerializable},
-};
+use parquet::{format::FileMetaData, thrift::TSerializable};
 use serde::Serialize;
 
 const REPEAT: usize = 5;
@@ -69,7 +66,7 @@ fn benchmark_one(c: &Config) -> Vec<BenchmarkResult> {
         };
         #[cfg(not(feature = "simd"))]
         let decoded_meta = {
-            let mut input = TCompactSliceInputProtocol::new(&buf);
+            let mut input = parquet::thrift::TCompactSliceInputProtocol::new(&buf);
             FileMetaData::read_from_in_protocol(&mut input).unwrap()
         };
         let elapse = start.elapsed();
