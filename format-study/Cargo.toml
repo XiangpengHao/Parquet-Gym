@@ -30,9 +30,8 @@ debug = true
 name = "metadata"
 harness = false
 
-[[bench]]
-name = "wide_parquet"
-harness = false
-
 [[bin]]
 name = "generator"
+
+[[bin]]
+name = "wide_table_bench"
