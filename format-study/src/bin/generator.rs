@@ -1,7 +1,7 @@
 use std::{fs::File, sync::Arc};
 
 use arrow::{
-    array::{ArrayRef, Float32Array, RecordBatch},
+    array::{ArrayRef, Float64Array, RecordBatch},
     datatypes::{DataType, Field, Schema},
 };
 use clap::{Parser, ValueEnum};
@@ -34,9 +34,9 @@ struct Args {
     #[arg(long)]
     column: usize,
 
-    /// Number of rows
+    /// Total number of values
     #[arg(long)]
-    row_per_group: usize,
+    value_cnt_million: usize,
 
     /// Number of row groups
     #[arg(long, default_value_t = 10)]
@@ -56,20 +56,21 @@ fn generate(args: Args) {
     for i in 0..args.column {
         fields.push(Field::new(
             &format!("column_{}", i),
-            DataType::Float32,
+            DataType::Float64,
             false,
         ));
     }
 
     let schema = Arc::new(Schema::new(fields));
 
+    let row_per_group = args.value_cnt_million * 1_000_000 / args.row_group / args.column;
     let mut columns: Vec<ArrayRef> = Vec::with_capacity(args.column);
     let array = {
-        let mut v = Vec::with_capacity(args.row_per_group);
-        for _ in 0..args.row_per_group {
+        let mut v = Vec::with_capacity(row_per_group);
+        for _ in 0..row_per_group {
             v.push(42.0);
         }
-        Arc::new(Float32Array::from(v))
+        Arc::new(Float64Array::from(v))
     };
 
     for _ in 0..args.column {
@@ -84,6 +85,7 @@ fn generate(args: Args) {
         Some(
             WriterProperties::builder()
                 .set_max_row_group_size(1_000_000)
+                .set_data_page_row_count_limit(10_000)
                 .set_statistics_enabled(args.stats.into())
                 .build(),
         ),
@@ -93,8 +95,9 @@ fn generate(args: Args) {
     for i in 0..args.row_group {
         println!("Working on row group: {}", i);
         let write_step = 10_000;
-        for offset in (0..args.row_per_group).step_by(write_step) {
-            let sliced = record_batch.slice(offset, write_step);
+        for offset in (0..row_per_group).step_by(write_step) {
+            let length = std::cmp::min(write_step, row_per_group - offset);
+            let sliced = record_batch.slice(offset, length);
             writer.write(&sliced).unwrap();
         }
         writer.flush().unwrap();

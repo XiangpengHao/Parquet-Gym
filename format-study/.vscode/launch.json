@@ -1,0 +1,129 @@
+{
+	// Use IntelliSense to learn about possible attributes.
+	// Hover to view descriptions of existing attributes.
+	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in library 'format_study'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--lib",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "format_study",
+					"kind": "lib"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'generator'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=generator",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "generator",
+					"kind": "bin"
+				}
+			},
+			"args": [
+				"--column",
+				"10000",
+				"--row-per-group",
+				"10000",
+				"--stats",
+				"none",
+				"--output",
+				"target/debug.parquet"
+			],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'generator'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=generator",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "generator",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug executable 'wide_table_bench'",
+			"cargo": {
+				"args": [
+					"build",
+					"--bin=wide_table_bench",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "wide_table_bench",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug unit tests in executable 'wide_table_bench'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bin=wide_table_bench",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "wide_table_bench",
+					"kind": "bin"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		},
+		{
+			"type": "lldb",
+			"request": "launch",
+			"name": "Debug benchmark 'metadata'",
+			"cargo": {
+				"args": [
+					"test",
+					"--no-run",
+					"--bench=metadata",
+					"--package=format-study"
+				],
+				"filter": {
+					"name": "metadata",
+					"kind": "bench"
+				}
+			},
+			"args": [],
+			"cwd": "${workspaceFolder}"
+		}
+	]
+}

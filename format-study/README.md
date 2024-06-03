@@ -15,6 +15,13 @@ Here we want to study the parquet format, specifically, answer the following que
 It is common to store a large number of features (thousands of key-value pairs) for ML training in ORC/Parquet format.
 (Section 5.5 in paper: https://www.vldb.org/pvldb/vol17/p148-zeng.pdf)
 
+#### To run and get numbers
+
+Setup python environment:
+```bash
+
+```
+
 #### Benchmark
 
 Run the following command to measure the time it takes to decode the parquet metadata with column number ranging from 10 to 100k. 

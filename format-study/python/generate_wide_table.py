@@ -8,17 +8,17 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from time import sleep
 
-columns = [10, 100, 500, 1000, 3000]
+columns = [10, 100, 500, 1_000, 2_000, 5_000, 10_000, 50_000, 100_000]
 stats_options = ["chunk", "none", "page"]
 
 def generate(output_dir):
     for column in columns:
         for stats in stats_options:
-            output_file = f"{output_dir}/{column}col_1m_{stats}.parquet"
+            output_file = f"{output_dir}/{column}col_10b_{stats}.parquet"
             command = [
                 "cargo", "run", "--bin", "generator", "--release", "--",
                 "--column", str(column),
-                "--row-per-group", "1000000",
+                "--value-cnt-million", "10000",
                 "--stats", stats,
                 "--output", output_file
             ]
@@ -26,9 +26,6 @@ def generate(output_dir):
             subprocess.run(command)
 
 def benchmark(parquet_dir, output_dir):
-    if os.path.exists(output_dir):
-        shutil.rmtree(output_dir)
-    os.makedirs(output_dir)
     for column in columns:
         for stats in stats_options:
             input_file = f"{parquet_dir}/{column}col_1m_{stats}.parquet"
@@ -56,11 +53,18 @@ def load_data(input_dir):
 
 def plot(input_dir, output_dir):
     df = load_data(input_dir) 
-    fig, ax1 = plt.subplots(1, 1, figsize=(6, 4))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
     sns.lineplot(data=df, x='column_cnt', y='metadata_decode_time_nanos', hue='stats', ax=ax1, markers=True, style='stats', dashes=False)
-    ax1.legend(title='Stats level')
+    ax1.legend(title='Stats level', frameon=False)
     ax1.set_xlabel('Number of columns')
-    ax1.set_ylabel('Metadata decode time (ns)')
+    ax1.set_ylabel('Metadata decode time (ms)')
+    ax1.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: '{:.0f}'.format(x/1e6)))
+
+    sns.lineplot(data=df, x='column_cnt', y='metadata_len', hue='stats', ax=ax2, markers=True, style='stats', dashes=False)
+    ax2.legend(title='Stats level', frameon=False)
+    ax2.set_xlabel('Number of columns')
+    ax2.set_ylabel('Metadata size (MB)')
+    ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: '{:.0f}'.format(x/1e6)))
     fig.savefig(os.path.join(output_dir, "metadata_decode_time.png"), dpi=300)
 
 if __name__ == "__main__":
@@ -71,9 +75,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
+    output_dir = args.output_dir
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+    os.makedirs(output_dir)
+
     if args.action == "generate":
-        generate(args.output_dir)
+        generate(output_dir)
     elif args.action == "benchmark":
-        benchmark(args.input_dir, args.output_dir)
+        benchmark(args.input_dir, output_dir)
     elif args.action == "plot":
-        plot(args.input_dir, args.output_dir)
+        plot(args.input_dir, output_dir)
