@@ -25,17 +25,17 @@ uv pip install -r ../requirements.txt
 source .venv/bin/activate
 ```
 
-2. Generate parquet files
+2. Generate parquet files in the `target/parquet_files` directory.
 ```bash
 python python/wide_table_study.py generate --output_dir target/parquet_files
 ```
 
-3. Run the benchmark
+3. Run the benchmark using the generated parquet files. The results are saved to the `target/wide_table_bench` directory.
 ```bash
 python python/wide_table_study.py benchmark --input_dir target/parquet_files --output_dir target/wide_table_bench/
 ```
 
-4. Plot the figure
+4. Plot the figure. Use the benchmark results to generate a figure.
 ```bash
 python python/wide_table_study.py plot --input_dir target/wide_table_bench/ --output_dir target/wide_table_figure
 ```

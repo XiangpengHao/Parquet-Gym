@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from time import sleep
 import concurrent.futures
+from matplotlib.patches import Patch
 
 columns = [10, 100, 500, 1_000, 2_000, 5_000, 10_000, 50_000, 100_000]
 # columns = [100_000]
@@ -57,7 +58,7 @@ def load_data(input_dir):
             with open(os.path.join(input_dir, f)) as json_f:
                 records.extend(json.load(json_f)[1:])
     df = pd.DataFrame(records)
-    df['time_per_column'] = df['metadata_decode_time_nanos'] / df['column_cnt']
+    df['time_per_column'] = df['metadata_end_to_end_load_time_nanos'] / df['column_cnt']
     df['stats'] = df.apply(lambda x: stats_type_from_file_name(x['file_name']), axis=1)
     return df
 
@@ -66,7 +67,7 @@ def plot(input_dir, output_dir):
     fig, (ax2, ax1) = plt.subplots(2, 2, figsize=(10, 8))
     fig.subplots_adjust(hspace=0.4)
     hue_order = ['none', 'chunk', 'page']
-    sns.lineplot(data=df, x='column_cnt', y='metadata_decode_time_nanos', hue='stats', 
+    sns.lineplot(data=df, x='column_cnt', y='metadata_end_to_end_load_time_nanos', hue='stats', 
                  ax=ax1[0], hue_order=hue_order, markers=True, style='stats', dashes=False)
     ax1[0].legend(title='Stats level', frameon=False)
     ax1[0].set_xlabel('Number of columns')
@@ -89,8 +90,10 @@ def plot(input_dir, output_dir):
     column_subset = [1_000, 2_000, 5_000, 10_000]
     df_subset = df[df['column_cnt'].isin(column_subset)]
 
-    sns.barplot(data=df_subset, x='column_cnt', y='metadata_decode_time_nanos', hue='stats',
-                hue_order=hue_order, ax=ax2[0])
+    palette = sns.color_palette()[:3]
+
+    sns.barplot(data=df_subset, x='column_cnt', y='metadata_end_to_end_load_time_nanos', hue='stats',
+                hue_order=hue_order, ax=ax2[0], palette=palette)
     sns.barplot(data=df_subset, x='column_cnt', y='metadata_len', hue='stats', 
                 hue_order= hue_order,ax=ax2[1])
     ax2[0].set_xlabel('Number of columns')
@@ -98,9 +101,23 @@ def plot(input_dir, output_dir):
     ax2[1].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: '{:.0f}'.format(x/1e6)))
     ax2[0].yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: '{:.0f}'.format(x/1e6)))
 
+    darker_palette = [sns.set_hls_values(c, l=.3) for c in palette]
+    sns.barplot(data=df_subset, x='column_cnt', y='schema_build_time_nanos', hue='stats',
+                hue_order=hue_order, ax=ax2[0], palette=darker_palette)
+
     ax2[0].set_ylabel('Metadata decode time (ms)')
     ax2[1].set_ylabel('Metadata size (MB)')
-    ax2[0].legend(title='Stats level', frameon=False)
+
+    h, l = ax2[0].get_legend_handles_labels()
+    ax2[0].legend(title='Stats level', labels=l[:3], handles=h[:3], frameon=False)
+
+    
+    ax2[0].annotate('Thrift decode', xy=(2, 20_000_000), xytext=(0.3, 0.4), 
+                    textcoords='axes fraction', arrowprops=dict(facecolor='black', arrowstyle='->'))
+
+    ax2[0].annotate('Schema build', xy=(2, 1_000_000), xytext=(0.2, 0.2), 
+                    textcoords='axes fraction', arrowprops=dict(facecolor='black', arrowstyle='->'))
+
     ax2[1].legend(title='Stats level', frameon=False)
     ax2[0].set_title('Metadata decode time')
     ax2[1].set_title('Metadata size')

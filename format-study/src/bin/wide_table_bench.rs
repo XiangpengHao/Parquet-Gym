@@ -4,13 +4,13 @@ use serde::Serialize;
 use std::{
     io::Read,
     path::{Path, PathBuf},
-    time::Duration,
+    sync::Arc,
 };
 
 use parquet::{
     arrow::arrow_reader::ArrowReaderMetadata,
     file::{
-        footer::{decode_footer, decode_metadata},
+        footer::{self, decode_footer},
         reader::ChunkReader,
         FOOTER_SIZE,
     },
@@ -19,7 +19,9 @@ use parquet::{
 #[derive(Debug, Clone, Serialize)]
 struct Measurements {
     metadata_end_to_end_load_time_nanos: usize,
-    metadata_decode_time_nanos: usize,
+    schema_build_time_nanos: usize,
+    thrift_decode_time_nanos: usize,
+    file_open_time_nanos: usize,
     metadata_len: usize,
     column_cnt: usize,
     row_group_cnt: usize,
@@ -42,21 +44,6 @@ fn get_metadata_len<R: ChunkReader>(reader: &R) -> usize {
     metadata_len
 }
 
-fn measure_decode_time<R: ChunkReader>(reader: &R) -> Duration {
-    let metadata_len = get_metadata_len(reader);
-    let footer_metadata_len = FOOTER_SIZE + metadata_len;
-
-    assert!(footer_metadata_len <= reader.len() as usize);
-    let start = reader.len() - footer_metadata_len as u64;
-    let metadata_bytes = reader.get_bytes(start, metadata_len).unwrap();
-
-    let now = std::time::Instant::now();
-    let metadata = decode_metadata(metadata_bytes.as_ref()).unwrap();
-    let elapsed = now.elapsed();
-    std::hint::black_box(metadata);
-    elapsed
-}
-
 fn get_column_row_count(meta: &ArrowReaderMetadata) -> (usize, usize, usize) {
     let row_group_cnt = meta.metadata().num_row_groups();
     let row_cnt = meta.metadata().file_metadata().num_rows();
@@ -65,20 +52,30 @@ fn get_column_row_count(meta: &ArrowReaderMetadata) -> (usize, usize, usize) {
 }
 
 fn benchmark_one(path: impl AsRef<Path>) -> Measurements {
-    let now = std::time::Instant::now();
+    let mut now = std::time::Instant::now();
     let file = std::fs::File::open(&path).unwrap();
-    let metadata = ArrowReaderMetadata::load(&file, Default::default()).unwrap();
-    let metadata_end_to_end_load_time = now.elapsed();
+    let file_open_time = now.elapsed();
+
+    now = std::time::Instant::now();
+    let metadata = footer::parse_metadata(&file).unwrap();
+    let thrift_parse_time = now.elapsed();
+
+    now = std::time::Instant::now();
+    let end_metadata =
+        ArrowReaderMetadata::try_new(Arc::new(metadata), Default::default()).unwrap();
+    let schema_build_time = now.elapsed();
+
+    let metadata_end_to_end_load_time = file_open_time + thrift_parse_time + schema_build_time;
 
     let metadata_len = get_metadata_len(&file);
 
-    let metadata_decode_time = measure_decode_time(&file);
-
-    let (row_group_cnt, row_cnt, column_cnt) = get_column_row_count(&metadata);
+    let (row_group_cnt, row_cnt, column_cnt) = get_column_row_count(&end_metadata);
 
     Measurements {
         metadata_end_to_end_load_time_nanos: metadata_end_to_end_load_time.as_nanos() as usize,
-        metadata_decode_time_nanos: metadata_decode_time.as_nanos() as usize,
+        thrift_decode_time_nanos: thrift_parse_time.as_nanos() as usize,
+        file_open_time_nanos: file_open_time.as_nanos() as usize,
+        schema_build_time_nanos: schema_build_time.as_nanos() as usize,
         metadata_len,
         column_cnt,
         row_group_cnt,
