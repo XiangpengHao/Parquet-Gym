@@ -17,27 +17,33 @@ It is common to store a large number of features (thousands of key-value pairs) 
 
 #### To run and get numbers
 
-Setup python environment:
+1. Setup python environment:
 ```bash
-
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv venv
+uv pip install -r ../requirements.txt
+source .venv/bin/activate
 ```
 
-#### Benchmark
-
-Run the following command to measure the time it takes to decode the parquet metadata with column number ranging from 10 to 100k. 
+2. Generate parquet files
 ```bash
-cargo bench --bench metadata
+python python/wide_table_study.py generate --output_dir target/parquet_files
 ```
 
-To plot the results, run the following command:
+3. Run the benchmark
 ```bash
-python python/plot_result.py
+python python/wide_table_study.py benchmark --input_dir target/parquet_files --output_dir target/wide_table_bench/
 ```
-(todo: how to setup python environment)
 
-We will get the following figure.
-It clearly shows that the time to decode the metadata is positively correlated with the number of columns in the parquet file.
-![metadata](python/metadata.png)
+4. Plot the figure
+```bash
+python python/wide_table_study.py plot --input_dir target/wide_table_bench/ --output_dir target/wide_table_figure
+```
+
+We will get something like this:
+![wide_table](python/metadata.png)
+
+
 
 #### Where did time go?
 (working-in-progress)
@@ -55,7 +61,4 @@ To benchmark with `mimalloc`
 ```bash
 cargo bench --bench metadata --features "mimalloc"
 ```
-
-We can generate the following figure.
-![allocation](python/allocation.png)
 

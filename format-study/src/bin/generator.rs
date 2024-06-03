@@ -42,6 +42,7 @@ struct Args {
     #[arg(long, default_value_t = 10)]
     row_group: usize,
 
+    /// Statistics level
     #[arg(long, value_enum)]
     stats: Statistics,
 
@@ -84,7 +85,7 @@ fn generate(args: Args) {
         schema.clone(),
         Some(
             WriterProperties::builder()
-                .set_max_row_group_size(1_000_000)
+                .set_max_row_group_size(1_000_000_000)
                 .set_data_page_row_count_limit(10_000)
                 .set_statistics_enabled(args.stats.into())
                 .build(),
@@ -93,7 +94,7 @@ fn generate(args: Args) {
     .unwrap();
 
     for i in 0..args.row_group {
-        println!("Working on row group: {}", i);
+        println!("[{}] Working on row group: {}", args.column, i);
         let write_step = 10_000;
         for offset in (0..row_per_group).step_by(write_step) {
             let length = std::cmp::min(write_step, row_per_group - offset);
