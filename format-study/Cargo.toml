@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+# arrow = { git = "https://github.com/tustvold/arrow-rs.git", branch = "thrift-borrow" }
+# parquet = { git = "https://github.com/tustvold/arrow-rs.git", branch = "thrift-borrow" }
+
 arrow = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
-bytes = "1.6.0"
 parquet = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
 rand = "0.8.5"
 serde = { version = "1.0.203", features = ["derive"] }

@@ -653,7 +653,6 @@ name = "format-study"
 version = "0.1.0"
 dependencies = [
  "arrow",
- "bytes",
  "chrono",
  "clap",
  "criterion",

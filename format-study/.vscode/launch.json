@@ -53,25 +53,6 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug unit tests in executable 'generator'",
-			"cargo": {
-				"args": [
-					"test",
-					"--no-run",
-					"--bin=generator",
-					"--package=format-study"
-				],
-				"filter": {
-					"name": "generator",
-					"kind": "bin"
-				}
-			},
-			"args": [],
-			"cwd": "${workspaceFolder}"
-		},
-		{
-			"type": "lldb",
-			"request": "launch",
 			"name": "Debug executable 'wide_table_bench'",
 			"cargo": {
 				"args": [
@@ -84,7 +65,10 @@
 					"kind": "bin"
 				}
 			},
-			"args": [],
+			"args": [
+				"--input", "target/parquet_files/1000col_10b_none.parquet",
+				"--output-dir", "target/wide_table_bench",
+			],
 			"cwd": "${workspaceFolder}"
 		},
 		{
