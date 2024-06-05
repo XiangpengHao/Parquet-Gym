@@ -16,6 +16,13 @@ use parquet::{
     },
 };
 
+#[cfg(feature = "mimalloc")]
+use mimalloc::MiMalloc;
+
+#[cfg(feature = "mimalloc")]
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
+
 #[derive(Debug, Clone, Serialize)]
 struct Measurements {
     metadata_end_to_end_load_time_nanos: usize,
@@ -84,8 +91,29 @@ fn benchmark_one(path: impl AsRef<Path>) -> Measurements {
     }
 }
 
-fn benchmark(file: impl AsRef<Path>, repeat: usize) -> Vec<Measurements> {
-    (0..repeat).map(|_| benchmark_one(&file)).collect()
+fn benchmark(
+    file: impl AsRef<Path>,
+    repeat: usize,
+    flamegraph: bool,
+) -> (Vec<Measurements>, Option<pprof::Report>) {
+    let mut measurements = vec![];
+    let mut report: Option<pprof::Report> = None;
+    for i in 0..repeat {
+        if flamegraph && i == (repeat - 1) {
+            let guard = pprof::ProfilerGuardBuilder::default()
+                .frequency(999)
+                .blocklist(&["libc", "libgcc", "pthread", "vdso"])
+                .build()
+                .unwrap();
+            let rt = benchmark_one(&file);
+            report = Some(guard.report().build().unwrap());
+            measurements.push(rt)
+        } else {
+            measurements.push(benchmark_one(&file));
+        }
+    }
+
+    (measurements, report)
 }
 
 fn save_to_json(out_dir: impl AsRef<Path>, data: &[Measurements]) -> PathBuf {
@@ -112,6 +140,9 @@ struct Args {
 
     #[arg(long, default_value = "target")]
     output_dir: String,
+
+    #[arg(long)]
+    flamegraph: bool,
 }
 
 fn main() {
@@ -120,7 +151,14 @@ fn main() {
         println!("Running with debug assertions, are you building with --release?");
     }
     let args = Args::parse();
-    let results = benchmark(&args.input, args.repeat);
+    let (results, report) = benchmark(&args.input, args.repeat, args.flamegraph);
+
     let out_file = save_to_json(args.output_dir, &results);
+    if let Some(report) = report {
+        let flamegraph_file = out_file.with_extension("svg");
+        let file = std::fs::File::create(&flamegraph_file).unwrap();
+        report.flamegraph(file).unwrap();
+        println!("Flamegraph saved to {}", flamegraph_file.display());
+    }
     println!("Benchmark result saved to {}", out_file.display());
 }

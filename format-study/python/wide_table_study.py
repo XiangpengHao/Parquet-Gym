@@ -41,7 +41,7 @@ def benchmark(parquet_dir, output_dir):
         for stats in stats_options:
             input_file = f"{parquet_dir}/{column}col_10b_{stats}.parquet"
             command = [
-                "cargo", "run", "--bin", "wide_table_bench", "--release", "--",
+                "cargo", "run", "--bin", "wide_table_bench", "--release", "--features", "mimalloc", "--",
                 "--input", input_file, "--output-dir", output_dir,
             ]
             print(f"Running command: {' '.join(command)}")

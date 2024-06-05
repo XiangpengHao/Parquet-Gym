@@ -1,4 +1,3 @@
-use parquet::thrift::TInputProtocolRef;
 use thrift::protocol::{
     TFieldIdentifier, TInputProtocol, TListIdentifier, TMapIdentifier, TMessageIdentifier,
     TSetIdentifier, TStructIdentifier, TType,
@@ -59,16 +58,6 @@ impl<'a> TCompactSimdInputProtocol<'a> {
         };
 
         Ok((element_type, element_count))
-    }
-}
-
-impl<'a> TInputProtocolRef<'a> for TCompactSimdInputProtocol<'a> {
-    fn read_buf(&mut self) -> thrift::Result<std::borrow::Cow<'a, [u8]>> {
-        Ok(self.read_bytes()?.into())
-    }
-
-    fn read_str(&mut self) -> thrift::Result<std::borrow::Cow<'a, str>> {
-        Ok(self.read_string()?.into())
     }
 }
 
