@@ -7,17 +7,19 @@ edition = "2021"
 # arrow = { git = "https://github.com/tustvold/arrow-rs.git", branch = "thrift-borrow" }
 # parquet = { git = "https://github.com/tustvold/arrow-rs.git", branch = "thrift-borrow" }
 
-# arrow = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
-# parquet = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
-arrow = { path = "../../arrow-rs/arrow" }
-parquet = { path = "../../arrow-rs/parquet" }
+arrow = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
+parquet = { git = "https://github.com/XiangpengHao/arrow-rs.git", branch = "metadata-bench" }
+# arrow = { path = "../../arrow-rs/arrow" }
+# parquet = { path = "../../arrow-rs/parquet" }
 rand = "0.8.5"
 serde = { version = "1.0.203", features = ["derive"] }
 serde_json = "1.0.117"
 thrift = "0.17.0"
 mimalloc = { version = "*", optional = true }
 chrono = "0.4.38"
-varint-simd = { version = "0.4.0", optional = true }
+varint-simd = { version = "0.4.0", optional = true, features = [
+	"native-optimizations",
+] }
 clap = { version = "4.5.4", features = ["derive"] }
 pprof = { version = "0.13", features = ["flamegraph"] }
 
